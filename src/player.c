@@ -123,6 +123,13 @@ void SpawnPlayer(int x,int y)
   newent->maxakclip=30;
   newent->maxdclip=8;
   newent->maxshells=8;
+  newent->total12ga=0;
+  newent->total50ae=0;
+  newent->total556=0;
+  newent->total762=0;
+  newent->total9mm=0;
+  newent->armor=0;
+  newent->armormax=100;
   atexit(FinalOutput);
 }
 
@@ -577,7 +584,6 @@ void PlayerThink(Entity *self)
     }
 	if(PlayerCommands[1] == PI_NextWeapon)
     {
-      printf("meep");
 	  self->currentweapon++;
       if(self->currentweapon >= NumWeapons)self->currentweapon = 0;
       self->switchdelay = 4;
@@ -676,10 +682,11 @@ void PlayerThink(Entity *self)
     }
 	if(PlayerCommands[1]==PI_Reload)
 	{
-		printf("YOU RELOAD THAT SHIT");
+		int ammo,remainder;
+		//printf("YOU RELOAD THAT SHIT");
 		if(self->currentweapon==2)
 		{	
-			if(self->gclip < self->maxgclip && self->right==1){
+			if(self->gclip < self->maxgclip && self->right==1 && self->total9mm>0){
 				if(self->reload==1)self->weaponframe=10;
 				self->reload=0;
 				if(self->reload==0){
@@ -689,10 +696,19 @@ void PlayerThink(Entity *self)
 				{
 					self->weaponframe=0;
 					self->reload=1;
-					self->gclip=15;
+					ammo=self->total9mm%self->maxgclip;
+					if(ammo==0)ammo=15;
+					self->total9mm-=ammo;
+					self->gclip+=ammo;
+					if(self->gclip > self->maxgclip)
+					{
+						remainder=self->gclip-self->maxgclip;
+						self->total9mm+=remainder;
+						self->gclip=self->maxgclip;
+					}
 				}
 			}
-			if(self->gclip< self->maxgclip && self->right==0){
+			if(self->gclip< self->maxgclip && self->right==0 && self->total9mm>0){
 				if(self->reload==1)self->weaponframe=19;
 				self->reload=0;
 				if(self->reload==0){
@@ -702,13 +718,22 @@ void PlayerThink(Entity *self)
 				{
 					self->weaponframe=22;
 					self->reload=1;
-					self->gclip=15;
+					ammo=self->total9mm%self->maxgclip;
+					if(ammo==0)ammo=15;
+					self->total9mm-=ammo;
+					self->gclip+=ammo;
+					if(self->gclip > self->maxgclip)
+					{
+						remainder=self->gclip-self->maxgclip;
+						self->total9mm+=remainder;
+						self->gclip=self->maxgclip;
+					}
 				}
 			}
 		}
 		if(self->currentweapon==3)
 		{	
-			if(self->dclip < self->maxdclip && self->right==1)
+			if(self->dclip < self->maxdclip && self->right==1 && self->total50ae>0)
 			{
 				if(self->reload==1)self->weaponframe=20;
 				self->reload=0;
@@ -719,10 +744,19 @@ void PlayerThink(Entity *self)
 				{
 					self->weaponframe=0;
 					self->reload=1;
-					self->dclip=8;
+					ammo=self->total50ae%self->maxdclip;
+					if(ammo==0)ammo=8;
+					self->total50ae-=ammo;
+					self->dclip+=ammo;
+					if(self->dclip > self->maxdclip)
+					{
+						remainder=self->dclip-self->maxdclip;
+						self->total50ae+=remainder;
+						self->dclip=self->maxdclip;
+					}
 				}
 			}
-			if(self->dclip < self->maxdclip && self->right==0)
+			if(self->dclip < self->maxdclip && self->right==0 && self->total50ae>0)
 			{
 				if(self->reload==1)self->weaponframe=25;
 				self->reload=0;
@@ -733,13 +767,22 @@ void PlayerThink(Entity *self)
 				{
 					self->weaponframe=4;
 					self->reload=1;
-					self->dclip=8;
+					ammo=self->total50ae%self->maxdclip;
+					if(ammo==0)ammo=8;
+					self->total50ae-=ammo;
+					self->dclip+=ammo;
+					if(self->dclip > self->maxdclip)
+					{
+						remainder=self->dclip-self->maxdclip;
+						self->total50ae+=remainder;
+						self->dclip=self->maxdclip;
+					}
 				}
 			}
 		}
 		if(self->currentweapon==4)
 		{	
-			if(self->akmag < self->maxakclip && self->right==1)
+			if(self->akmag < self->maxakclip && self->right==1 && self->total762 > 0)
 			{
 				if(self->reload==1)self->weaponframe=20;
 				self->reload=0;
@@ -750,10 +793,19 @@ void PlayerThink(Entity *self)
 				{
 					self->weaponframe=0;
 					self->reload=1;
-					self->akmag=30;
+					ammo=self->total762%self->maxakclip;
+					if(ammo==0)ammo=30;
+					self->total762-=ammo;
+					self->akmag+=ammo;
+					if(self->akmag > self->maxakclip)
+					{
+						remainder=self->akmag-self->maxakclip;
+						self->total762+=remainder;
+						self->akmag=self->maxakclip;
+					}
 				}
 			}
-			if(self->akmag < self->maxakclip && self->right==0)
+			if(self->akmag < self->maxakclip && self->right==0 && self->total762 > 0)
 			{
 				if(self->reload==1)self->weaponframe=25;
 				self->reload=0;
@@ -764,13 +816,22 @@ void PlayerThink(Entity *self)
 				{
 					self->weaponframe=4;
 					self->reload=1;
-					self->akmag=30;
+					ammo=self->total762%self->maxakclip;
+					if(ammo==0)ammo=30;
+					self->total762-=ammo;
+					self->akmag+=ammo;
+					if(self->akmag > self->maxakclip)
+					{
+						remainder=self->akmag-self->maxakclip;
+						self->total762+=remainder;
+						self->akmag=self->maxakclip;
+					}
 				}
 			}
 		}
 		if(self->currentweapon==5)
 		{	
-			if(self->acrmag < self->maxacrclip && self->right==1)
+			if(self->acrmag < self->maxacrclip && self->right==1 && self->total556 > 0)
 			{
 				if(self->reload==1)self->weaponframe=20;
 				self->reload=0;
@@ -781,10 +842,19 @@ void PlayerThink(Entity *self)
 				{
 					self->weaponframe=0;
 					self->reload=1;
-					self->acrmag=30;
+					ammo=self->total556%self->maxacrclip;
+					if(ammo==0)ammo=30;
+					self->total556-=ammo;
+					self->acrmag+=ammo;
+					if(self->acrmag > self->maxacrclip)
+					{
+						remainder=self->acrmag-self->maxacrclip;
+						self->total556+=remainder;
+						self->acrmag=self->maxacrclip;
+					}
 				}
 			}
-			if(self->acrmag<self->maxacrclip && self->right==0)
+			if(self->acrmag<self->maxacrclip && self->right==0 && self->total556 > 0)
 			{
 				if(self->reload==1)self->weaponframe=25;
 				self->reload=0;
@@ -795,13 +865,22 @@ void PlayerThink(Entity *self)
 				{
 					self->weaponframe=2;
 					self->reload=1;
-					self->acrmag=30;
+					ammo=self->total556%self->maxacrclip;
+					if(ammo==0)ammo=30;
+					self->total556-=ammo;
+					self->acrmag+=ammo;
+					if(self->acrmag > self->maxacrclip)
+					{
+						remainder=self->acrmag-self->maxacrclip;
+						self->total556+=remainder;
+						self->acrmag=self->maxacrclip;
+					}
 				}
 			}
 		}
 		if(self->currentweapon==6)
 		{	
-			if(self->shells < self->maxshells && self->right==1)
+			if(self->shells < self->maxshells && self->right==1 && self->total12ga > 0)
 			{
 				if(self->reload==1)self->weaponframe=20;
 				self->reload=0;
@@ -813,9 +892,10 @@ void PlayerThink(Entity *self)
 					self->weaponframe=20;
 					self->reload=1;
 					self->shells++;
+					self->total12ga--;
 				}
 			}
-			if(self->shells< self->maxshells && self->right==0)
+			if(self->shells< self->maxshells && self->right==0 && self->total12ga > 0)
 			{
 				if(self->reload==1)self->weaponframe=25;
 				self->reload=0;
@@ -827,6 +907,7 @@ void PlayerThink(Entity *self)
 					self->weaponframe=25;
 					self->reload=1;
 					self->shells++;
+					self->total12ga--;
 				}
 			}
 		}
@@ -1332,7 +1413,27 @@ void PlayerThink(Entity *self)
 void UpdatePlayer(Entity *self)
 {
   int Goframe = 0; 
-  //DrawFilledRect(self->Boundingbox.x,self->Boundingbox.y,self->Boundingbox.w,self->Boundingbox.h,Grey,screen);
+  char text[60];
+  if(self->currentweapon==2){
+	  sprintf(text,"%i / %i",self->gclip,self->total9mm);
+	  DrawText(text,screen,50,20,IndexColor(self->Color),F_Large);
+  }
+  if(self->currentweapon==3){
+	  sprintf(text,"%i / %i",self->dclip,self->total50ae);
+	  DrawText(text,screen,50,20,IndexColor(self->Color),F_Large);
+  }
+  if(self->currentweapon==4){
+	  sprintf(text,"%i / %i",self->akmag,self->total762);
+	  DrawText(text,screen,50,20,IndexColor(self->Color),F_Large);
+  }
+  if(self->currentweapon==5){
+	  sprintf(text,"%i / %i",self->acrmag,self->total556);
+	  DrawText(text,screen,50,20,IndexColor(self->Color),F_Large);
+  }
+  if(self->currentweapon==6){
+	  sprintf(text,"%i / %i",self->shells,self->total12ga);
+	  DrawText(text,screen,50,20,IndexColor(self->Color),F_Large);
+  }
   UpdateEntityPosition(self,0);
   if(self->jump==0)
   {

@@ -57,7 +57,9 @@ void SpawnZombie(Entity *owner,int x,int y,int weapon,int affiliation)
   Newent->Boundingbox.h = 237;
   Newent->m.x = (x + Newent->origin.x) >> 6;
   Newent->m.y = (y + Newent->origin.y) >> 6;
+  Newent->Enemy=1;
   AddEntToRegion(Newent,Newent->m.x,Newent->m.y);
+  Enemy=Newent;
 }
 
 void ZombieThink(Entity *self)
@@ -140,12 +142,7 @@ void ZombieThink(Entity *self)
 
 void UpdateZombie(Entity *self)
 {
-	int a,b,c,d;
-	a = self->Boundingbox.w;
-  b = self->Boundingbox.h;
-  c = self->Boundingbox.x + (int)self->s.x;
-  d = self->Boundingbox.y + (int)self->s.y+90;
-	DrawFilledRect(c,d,b,a,Grey,screen);
+	//DrawFilledRect(c,d,b,a,Grey,screen);
 	UpdateEntityPosition(self,0);
   if(!self->grounded)
   {

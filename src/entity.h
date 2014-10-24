@@ -98,6 +98,7 @@ typedef struct ENTITY_T
 	int currentweapon;
 	
 	int weaponframe;
+	int armormax;
 	int armor;
 	int health,healthmax;
 	int takedamage;
@@ -128,7 +129,14 @@ typedef struct ENTITY_T
 	int acrmag;
 	Coord shotys;
 	int shells;
-
+	int Enemy;
+	int total9mm;
+	int total12ga;
+	int total50ae;
+	int total556;
+	int total762;
+	int ammotype;
+	int healthtype;
 }Entity;
 
 //startup and clean up

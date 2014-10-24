@@ -15,7 +15,10 @@
 #include "menu.h"
 #include "spawn.h"
 #include "zombies.h"
-
+#include "ammo.h"
+#include "healthpack.h"
+#include "armor.h"
+//TESTing
 #define MAXSTATE 1
 
 extern SDL_Surface *screen;
@@ -24,6 +27,9 @@ extern SDL_Surface *background;
 extern SDL_Rect Camera;
 extern Entity *ThePlayer;
 extern Entity *Enemy;
+extern Entity *Ammo;
+extern Entity *Health;
+extern Entity *Armor;
 extern Level level;
 extern SDL_Surface *clipmask;
 int drawents = 1,drawboxes = 0;
@@ -80,7 +86,9 @@ int main(int argc, char *argv[])
   SpawnAll(1);
   if(Enemy==NULL)SpawnZombie(Enemy,600,128,2,1);
   if(ThePlayer == NULL)SpawnPlayer(128,128);
-  
+  if(Ammo==NULL)SpawnAmmo(900,128,0);
+  if(Health==NULL)SpawnHealth(1900,128,2);
+  if(Armor==NULL)SpawnArmor(1500,128);
   do
   {
 	ResetBuffer();

@@ -4,6 +4,8 @@
 #include "particle.h"
 #include "projectiles.h"
 
+void UpdateSlash(Entity *self);
+void UpdatePunch(Entity *self);
 void UpdateBullet(Entity *self);
 void UpdateGrenade(Entity *self);
 void UpdateRocket(Entity *self);
@@ -19,7 +21,8 @@ void UpdateMine(Entity *self);
 void UpdateBlade(Entity *self);
 
 extern Uint32 NOW;
-
+extern Entity EntityList[];
+extern Entity *Enemy;
 
 /*this will be a generic spawn function that will set some basic info to save code*/
 Entity *SpawnProjectile(int sx,int sy,float angle,float speed,float accel,int damage,int dtype,float kick)
@@ -189,6 +192,7 @@ Entity *SpawnBullet(Entity *owner,int sx,int sy,float angle,float speed,int dama
       newent->Boundingbox.w = 15;
       newent->Boundingbox.h = 15;
 	  newent->lifespan=60;
+	  newent->update = UpdateBullet;
      // newent->sound[SF_ALERT] = LoadSound("sounds/ric1.wav",SDL_MIX_MAXVOLUME>>4);
       break;
     case fivefivesix:
@@ -200,6 +204,7 @@ Entity *SpawnBullet(Entity *owner,int sx,int sy,float angle,float speed,int dama
       newent->Boundingbox.w = 25;
       newent->Boundingbox.h = 25;
 	  newent->lifespan=60;
+	  newent->update = UpdateBullet;
       //newent->sound[SF_ALERT] = LoadSound("sounds/ric2.wav",SDL_MIX_MAXVOLUME>>4);
       break;
     case sevensixtwo:
@@ -211,6 +216,7 @@ Entity *SpawnBullet(Entity *owner,int sx,int sy,float angle,float speed,int dama
       newent->Boundingbox.w = 25;
       newent->Boundingbox.h = 25;
 	  newent->lifespan=60;
+	  newent->update = UpdateBullet;
    //   newent->sound[SF_ALERT] = LoadSound("sounds/ric3.wav",SDL_MIX_MAXVOLUME>>3);
       break;
     case fifty:
@@ -223,6 +229,7 @@ Entity *SpawnBullet(Entity *owner,int sx,int sy,float angle,float speed,int dama
       newent->Boundingbox.w = 13;
       newent->Boundingbox.h = 13;
 	  newent->lifespan=60;
+	  newent->update = UpdateBullet;
       //newent->sound[SF_ALERT] = LoadSound("sounds/xfire.wav",SDL_MIX_MAXVOLUME>>2);
       break;
 	case pellets:
@@ -235,6 +242,7 @@ Entity *SpawnBullet(Entity *owner,int sx,int sy,float angle,float speed,int dama
       newent->Boundingbox.w = 5;
       newent->Boundingbox.h = 5;
 	  newent->lifespan=60;
+	  newent->update = UpdateBullet;
       //newent->sound[SF_ALERT] = LoadSound("sounds/xfire.wav",SDL_MIX_MAXVOLUME>>2);
       break;
 	case fist:
@@ -246,7 +254,8 @@ Entity *SpawnBullet(Entity *owner,int sx,int sy,float angle,float speed,int dama
       newent->Boundingbox.y = 3;
       newent->Boundingbox.w = 45;
       newent->Boundingbox.h = 45;
-	  newent->lifespan=1;
+	  //newent->lifespan=1;
+	  newent->update = UpdatePunch;
       //newent->sound[SF_ALERT] = LoadSound("sounds/xfire.wav",SDL_MIX_MAXVOLUME>>2);
       break;
 	case blade:
@@ -258,7 +267,8 @@ Entity *SpawnBullet(Entity *owner,int sx,int sy,float angle,float speed,int dama
       newent->Boundingbox.y = 3;
       newent->Boundingbox.w = 305;
       newent->Boundingbox.h = 305;
-	  newent->lifespan=1;
+	  newent->update=UpdateSlash;
+	  //newent->lifespan=2;
       //newent->sound[SF_ALERT] = LoadSound("sounds/xfire.wav",SDL_MIX_MAXVOLUME>>2);
       break;
 
@@ -269,7 +279,6 @@ Entity *SpawnBullet(Entity *owner,int sx,int sy,float angle,float speed,int dama
   //SDL_SetColorKey(newent->sprite->image, SDL_SRCCOLORKEY , SDL_MapRGB(newent->sprite->image->format, 0,0,0));
   newent->frame = bulletframe;
   newent->owner = owner;
-  newent->update = UpdateBullet;
   newent->UpdateRate = 30;
   newent->Color = color;
   newent->Unit_Type = UType;
@@ -301,15 +310,80 @@ void UpdateBullet(Entity *self)
     FreeEntity(self);
     return;  
   }
-  target = GetTouchingEnt(self);
+  if(Enemy!=NULL)
+  {
+	SDL_Rect bbox,bbox2;
+	bbox2.x=Enemy->s.x;
+	bbox2.y=Enemy->s.y;
+	bbox2.h=Enemy->Boundingbox.w;
+	bbox2.w=Enemy->Boundingbox.h;
+	bbox.x=self->s.x;
+	bbox.y=self->s.y;
+	bbox.w=self->Boundingbox.w;
+	bbox.h=self->Boundingbox.h;
+	if(Collide(bbox,bbox2)==1){
+		printf("YOU HIT ME :(");
+		target=Enemy;
+		DamageTarget(self->owner,self,target,self->damage,self->dtype,self->kick,self->v.x,self->v.y);
+		FreeEntity(self);
+	}
+  }
+  /*target = GetTouchingEnt(self);
   if(target != NULL)
   {
     printf("HOLYSHIT");
 	DamageTarget(self->owner,self,target,self->damage,self->dtype,self->kick,self->v.x,self->v.y);
     FreeEntity(self);    
-  }
+  }*/
 }
 
+void UpdatePunch(Entity *self)
+{
+  Entity *target = NULL;
+  if(Enemy!=NULL)
+  {
+	SDL_Rect bbox,bbox2;
+	bbox2.x=Enemy->s.x;
+	bbox2.y=Enemy->s.y;
+	bbox2.h=Enemy->Boundingbox.w;
+	bbox2.w=Enemy->Boundingbox.h;
+	bbox.x=self->s.x;
+	bbox.y=self->s.y;
+	bbox.w=self->Boundingbox.w;
+	bbox.h=self->Boundingbox.h;
+	if(Collide(bbox,bbox2)==1){
+		printf("YOU HIT ME :(");
+		target=Enemy;
+		DamageTarget(self->owner,self,target,self->damage,self->dtype,self->kick,self->v.x,self->v.y);
+		FreeEntity(self);
+	}
+  }
+  FreeEntity(self);
+}
+
+void UpdateSlash(Entity *self)
+{
+  Entity *target = NULL;
+  if(Enemy!=NULL)
+  {
+	SDL_Rect bbox,bbox2;
+	bbox2.x=Enemy->s.x;
+	bbox2.y=Enemy->s.y;
+	bbox2.h=Enemy->Boundingbox.w;
+	bbox2.w=Enemy->Boundingbox.h;
+	bbox.x=self->s.x;
+	bbox.y=self->s.y;
+	bbox.w=self->Boundingbox.w;
+	bbox.h=self->Boundingbox.h;
+	if(Collide(bbox,bbox2)==1){
+		printf("YOU HIT ME :(");
+		target=Enemy;
+		DamageTarget(self->owner,self,target,self->damage,self->dtype,self->kick,self->v.x,self->v.y);
+		FreeEntity(self);
+	}
+  }
+  FreeEntity(self);
+}
 /*************************************************************
               
                        Basic Laser Projectile
@@ -417,13 +491,33 @@ void FadingLaser(Entity *self)
 Entity *GetTouchingEnt(Entity *self)
 {
   Entity *target = NULL;
-  SDL_Rect bbox;
+  /*int i=0;
+  SDL_Rect bbox,bbox2;
   bbox.w = self->Boundingbox.w;
   bbox.h = self->Boundingbox.h;
   bbox.x = self->Boundingbox.x + (int)self->s.x;
   bbox.y = self->Boundingbox.y + (int)self->s.y;
-
-  target = GetEntByBox(bbox,self->m.x,self->m.y,self,self->Unit_Type);
+  
+  for(i = 0;i < MAXENTITIES;i++)
+  {
+    if(EntityList[i].used == 1)
+    {
+		if(EntityList[i].Enemy==1)
+		{
+			printf("You found an enemy");
+			bbox2.x=EntityList[i].s.x;
+			bbox2.y=EntityList[i].s.y;
+			bbox2.h=EntityList[i].Boundingbox.h;
+			bbox2.w=EntityList[i].Boundingbox.w;
+			if(Collide(bbox,bbox2)==1)
+			{
+				printf("YOU HIT ME :(");
+				//target=EntityList[i].;
+			}
+		}
+    }
+  }
+  /*target = GetEntByBox(bbox,self->m.x,self->m.y,self,self->Unit_Type);
   if(target != NULL)return target;
   target = GetEntByBox(bbox,self->m.x + 1,self->m.y - 1,self,self->Unit_Type);
   if(target != NULL)return target;
@@ -439,7 +533,7 @@ Entity *GetTouchingEnt(Entity *self)
   if(target != NULL)return target;
   target = GetEntByBox(bbox,self->m.x,self->m.y - 1,self,self->Unit_Type);
   if(target != NULL)return target;
-  target = GetEntByBox(bbox,self->m.x,self->m.y + 1,self,self->Unit_Type);
+  target = GetEntByBox(bbox,self->m.x,self->m.y + 1,self,self->Unit_Type);*/
   if(target != NULL)return target;
   return NULL;
 }
