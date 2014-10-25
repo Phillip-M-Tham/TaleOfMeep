@@ -7,21 +7,25 @@ Entity *Ammo=NULL;
 
 void UpdateAmmoBox(Entity *self);
 
-Entity *SpawnAmmo(int x, int y, int type)
+void SpawnAmmo(Entity *owner, int x, int y,int subtype, int faction)
 {
 	Entity *newent=NULL;
 	newent=	NewEntity();
-	if(newent == NULL)return NULL;
+	if(newent == NULL)
+	{
+		fprintf(stderr,"Unable to generate zombie entity; %s",SDL_GetError());
+		return;
+	}
 	newent->s.x=x;
 	newent->s.y=y;
-	switch(type)
+	switch(subtype)
 	{
 		case 0:
 			newent->sprite=LoadSwappedSprite("images/73x51ammo9mm.png",73,51);
-			newent->origin.x = 3;
-			newent->origin.y = 3;
-			newent->Boundingbox.x=20;
-			newent->Boundingbox.y=20;
+			newent->origin.x = 5;
+			newent->origin.y = 5;
+			newent->Boundingbox.x=15;
+			newent->Boundingbox.y=15;
 			newent->Boundingbox.w=73;
 			newent->Boundingbox.h=51;
 			newent->update = UpdateAmmoBox;
@@ -31,8 +35,8 @@ Entity *SpawnAmmo(int x, int y, int type)
 			newent->sprite=LoadSwappedSprite("images/73x51ammo556.png",73,51);
 			newent->origin.x = 5;
 			newent->origin.y = 5;
-			newent->Boundingbox.x=25;
-			newent->Boundingbox.y=25;
+			newent->Boundingbox.x=15;
+			newent->Boundingbox.y=15;
 			newent->Boundingbox.w=73;
 			newent->Boundingbox.h=51;
 			newent->update = UpdateAmmoBox;
@@ -40,8 +44,8 @@ Entity *SpawnAmmo(int x, int y, int type)
 			break;
 		case 2:
 			newent->sprite=LoadSwappedSprite("images/73x51ammo762.png",73,51);
-			newent->origin.x = 10;
-			newent->origin.y = 10;
+			newent->origin.x = 5;
+			newent->origin.y = 5;
 			newent->Boundingbox.x=15;
 			newent->Boundingbox.y=15;
 			newent->Boundingbox.w=73;
@@ -51,10 +55,10 @@ Entity *SpawnAmmo(int x, int y, int type)
 			break;
 		case 3:
 			newent->sprite=LoadSwappedSprite("images/73x51ammo50ae.png",73,51);
-			newent->origin.x = 20;
-			newent->origin.y = 20;
-			newent->Boundingbox.x=5;
-			newent->Boundingbox.y=5;
+			newent->origin.x = 5;
+			newent->origin.y = 5;
+			newent->Boundingbox.x=15;
+			newent->Boundingbox.y=15;
 			newent->Boundingbox.w=73;
 			newent->Boundingbox.h=51;
 			newent->update = UpdateAmmoBox;
@@ -62,10 +66,10 @@ Entity *SpawnAmmo(int x, int y, int type)
 			break;
 		case 4:
 			newent->sprite=LoadSwappedSprite("images/73x51ammo12Ga.png",73,51);
-			newent->origin.x = 8;
-			newent->origin.y = 8;
-			newent->Boundingbox.x=20;
-			newent->Boundingbox.y=20;
+			newent->origin.x = 5;
+			newent->origin.y = 5;
+			newent->Boundingbox.x=15;
+			newent->Boundingbox.y=15;
 			newent->Boundingbox.w=73;
 			newent->Boundingbox.h=51;
 			newent->update = UpdateAmmoBox;
@@ -82,7 +86,6 @@ Entity *SpawnAmmo(int x, int y, int type)
 	newent->m.y = (y + newent->origin.y) >> 6;
 	AddEntToRegion(newent,newent->m.x,newent->m.y);
 	Ammo=newent;
-	return newent;
 }
 
 void UpdateAmmoBox(Entity *self)
@@ -92,12 +95,12 @@ void UpdateAmmoBox(Entity *self)
   {
 	  self->v.y+=5;
   }
-  self->lifespan--;
+  /*self->lifespan--;
   if(self->lifespan <= 0)
   {
     FreeEntity(self);
     return;  
-  }
+  }*/
   if(ThePlayer!=NULL)
   {
 	SDL_Rect bbox,bbox2;

@@ -62,7 +62,7 @@ void SpawnPlayer(int x,int y)
   newent->think = PlayerThink;
   newent->UpdateRate = 35;
   newent->ThinkRate = 35;
-  newent->weaponstate = 1;
+  //newent->weaponstate = 1;
   newent->takedamage = 1;
   newent->XP = 0;
   newent->Unit_Type = ET_Player;
@@ -695,7 +695,6 @@ void PlayerThink(Entity *self)
 				if(self->weaponframe==15)
 				{
 					self->weaponframe=0;
-					self->reload=1;
 					ammo=self->total9mm%self->maxgclip;
 					if(ammo==0)ammo=15;
 					self->total9mm-=ammo;
@@ -706,6 +705,7 @@ void PlayerThink(Entity *self)
 						self->total9mm+=remainder;
 						self->gclip=self->maxgclip;
 					}
+					self->reload=1;
 				}
 			}
 			if(self->gclip< self->maxgclip && self->right==0 && self->total9mm>0){
@@ -717,7 +717,6 @@ void PlayerThink(Entity *self)
 				if(self->weaponframe==16)
 				{
 					self->weaponframe=22;
-					self->reload=1;
 					ammo=self->total9mm%self->maxgclip;
 					if(ammo==0)ammo=15;
 					self->total9mm-=ammo;
@@ -728,6 +727,7 @@ void PlayerThink(Entity *self)
 						self->total9mm+=remainder;
 						self->gclip=self->maxgclip;
 					}
+					self->reload=1;
 				}
 			}
 		}
@@ -743,7 +743,6 @@ void PlayerThink(Entity *self)
 				if(self->weaponframe==25)
 				{
 					self->weaponframe=0;
-					self->reload=1;
 					ammo=self->total50ae%self->maxdclip;
 					if(ammo==0)ammo=8;
 					self->total50ae-=ammo;
@@ -754,6 +753,7 @@ void PlayerThink(Entity *self)
 						self->total50ae+=remainder;
 						self->dclip=self->maxdclip;
 					}
+					self->reload=1;
 				}
 			}
 			if(self->dclip < self->maxdclip && self->right==0 && self->total50ae>0)
@@ -766,7 +766,6 @@ void PlayerThink(Entity *self)
 				if(self->weaponframe==30)
 				{
 					self->weaponframe=4;
-					self->reload=1;
 					ammo=self->total50ae%self->maxdclip;
 					if(ammo==0)ammo=8;
 					self->total50ae-=ammo;
@@ -777,6 +776,7 @@ void PlayerThink(Entity *self)
 						self->total50ae+=remainder;
 						self->dclip=self->maxdclip;
 					}
+					self->reload=1;
 				}
 			}
 		}
@@ -792,7 +792,6 @@ void PlayerThink(Entity *self)
 				if(self->weaponframe==25)
 				{
 					self->weaponframe=0;
-					self->reload=1;
 					ammo=self->total762%self->maxakclip;
 					if(ammo==0)ammo=30;
 					self->total762-=ammo;
@@ -803,6 +802,7 @@ void PlayerThink(Entity *self)
 						self->total762+=remainder;
 						self->akmag=self->maxakclip;
 					}
+					self->reload=1;
 				}
 			}
 			if(self->akmag < self->maxakclip && self->right==0 && self->total762 > 0)
@@ -814,8 +814,7 @@ void PlayerThink(Entity *self)
 				}
 				if(self->weaponframe==30)
 				{
-					self->weaponframe=4;
-					self->reload=1;
+					self->weaponframe=2;
 					ammo=self->total762%self->maxakclip;
 					if(ammo==0)ammo=30;
 					self->total762-=ammo;
@@ -826,6 +825,7 @@ void PlayerThink(Entity *self)
 						self->total762+=remainder;
 						self->akmag=self->maxakclip;
 					}
+					self->reload=1;
 				}
 			}
 		}
@@ -841,7 +841,7 @@ void PlayerThink(Entity *self)
 				if(self->weaponframe==25)
 				{
 					self->weaponframe=0;
-					self->reload=1;
+					//self->reload=1;
 					ammo=self->total556%self->maxacrclip;
 					if(ammo==0)ammo=30;
 					self->total556-=ammo;
@@ -852,6 +852,7 @@ void PlayerThink(Entity *self)
 						self->total556+=remainder;
 						self->acrmag=self->maxacrclip;
 					}
+					self->reload=1;
 				}
 			}
 			if(self->acrmag<self->maxacrclip && self->right==0 && self->total556 > 0)
@@ -864,7 +865,7 @@ void PlayerThink(Entity *self)
 				if(self->weaponframe==30)
 				{
 					self->weaponframe=2;
-					self->reload=1;
+					//self->reload=1;
 					ammo=self->total556%self->maxacrclip;
 					if(ammo==0)ammo=30;
 					self->total556-=ammo;
@@ -875,6 +876,7 @@ void PlayerThink(Entity *self)
 						self->total556+=remainder;
 						self->acrmag=self->maxacrclip;
 					}
+					self->reload=1;
 				}
 			}
 		}
@@ -1120,9 +1122,11 @@ void PlayerThink(Entity *self)
 		self->v.y=0;
       //SpawnThrust(IndexColor(self->Color),self->s.x + 24,self->s.y + 24,0,-1,self->movespeed,self->movespeed * 4);
     }
-    else if(PlayerCommands[0] == PI_MovLeft)
+	else if(PlayerCommands[0] == PI_MovLeft)
     {      
-      //int y;
+		if(self->reload==0 && self->right==1){
+			self->reload=1;
+		}
 	  if(self->right==1)
 	  {
 		  self->fs.x-=150;
@@ -1133,19 +1137,21 @@ void PlayerThink(Entity *self)
 		  self->acrs.x-=150;
 		  self->shotys.x-=150;
 		  self->aimdir=F_West;
-		  if(self->currentweapon==0)self->weaponframe=3;
-		  if(self->currentweapon==1)
-		  {
-			  if(self->swordlvl==0)self->weaponframe=10;
-			  if(self->swordlvl==1)self->weaponframe=2;
-			  if(self->swordlvl==2)self->weaponframe=6;
+		  if(self->reload==1){
+			if(self->currentweapon==0)self->weaponframe=3;
+			if(self->currentweapon==1)
+			{
+				if(self->swordlvl==0)self->weaponframe=10;
+				if(self->swordlvl==1)self->weaponframe=2;
+				if(self->swordlvl==2)self->weaponframe=6;
+			}
+			if(self->currentweapon==2)self->weaponframe=22;
+			if(self->currentweapon==3)self->weaponframe=4;
+			if(self->currentweapon==4)self->weaponframe=2;
+			if(self->currentweapon==5)self->weaponframe=2;
+			if(self->currentweapon==6)self->weaponframe=2;
+			self->right=0;
 		  }
-		  if(self->currentweapon==2)self->weaponframe=22;
-		  if(self->currentweapon==3)self->weaponframe=4;
-		  if(self->currentweapon==4)self->weaponframe=2;
-		  if(self->currentweapon==5)self->weaponframe=2;
-		  if(self->currentweapon==6)self->weaponframe=2;
-		  self->right=0;
 	  }
 	  if(UpdateEntityPosition(self,0)!=1)self->s.y+=20;
 	  self->right=0;
@@ -1162,11 +1168,14 @@ void PlayerThink(Entity *self)
 		self->frame--;
       //SpawnThrust(IndexColor(self->Color),self->s.x + 24,self->s.y + 24,2,0,self->movespeed,self->movespeed * 4);
     }
-    else if(PlayerCommands[0] == PI_MovRight)
+	else if(PlayerCommands[0] == PI_MovRight)
     {      
-	  if(self->right==0)
+	  if(self->reload==0 && self->right==0){
+			self->reload=1;
+		}
+		if(self->right==0)
 	  {
-		  self->aimdir=F_East;
+		 self->aimdir=F_East;
 		 self->fs.x+=150;
 		 self->gs.x+=150;
 		 self->ss.x+=150;
@@ -1174,19 +1183,19 @@ void PlayerThink(Entity *self)
 		 self->aks.x+=50;
 		 self->acrs.x+=150;
 		 self->shotys.x+=150;
-		 if(self->currentweapon==0)self->weaponframe=0;
-		  if(self->currentweapon==1)
-		  {
+			if(self->currentweapon==0)self->weaponframe=0;
+			if(self->currentweapon==1)
+			{
 			  if(self->swordlvl==0)self->weaponframe=8;
 			  if(self->swordlvl==1)self->weaponframe=0;
 			  if(self->swordlvl==2)self->weaponframe=4;
-		  }
-		 if(self->currentweapon==2)self->weaponframe=0;
-		 if(self->currentweapon==3)self->weaponframe=0;
-		 if(self->currentweapon==4)self->weaponframe=0;
-		 if(self->currentweapon==5)self->weaponframe=0;
-		 if(self->currentweapon==6)self->weaponframe=0;
-		 self->right=1;  
+			}
+			if(self->currentweapon==2)self->weaponframe=0;
+			if(self->currentweapon==3)self->weaponframe=0;
+			if(self->currentweapon==4)self->weaponframe=0;
+			if(self->currentweapon==5)self->weaponframe=0;
+			if(self->currentweapon==6)self->weaponframe=0;
+			self->right=1; 
 	  }
 	  if(UpdateEntityPosition(self,0)!=1)self->s.y+=20;
 	  self->right=1;
@@ -1412,7 +1421,7 @@ void PlayerThink(Entity *self)
 
 void UpdatePlayer(Entity *self)
 {
-  int Goframe = 0; 
+  int Goframe = 0;
   char text[60];
   if(self->currentweapon==2){
 	  sprintf(text,"%i / %i",self->gclip,self->total9mm);
@@ -1434,6 +1443,7 @@ void UpdatePlayer(Entity *self)
 	  sprintf(text,"%i / %i",self->shells,self->total12ga);
 	  DrawText(text,screen,50,20,IndexColor(self->Color),F_Large);
   }
+//  printf("%i",self->KillCount);
   UpdateEntityPosition(self,0);
   if(self->jump==0)
   {
@@ -1801,7 +1811,7 @@ void DrawHUD(Entity *self)
   }
   else
   {
-    SDL_BlitSurface(titlebar,NULL,screen,NULL);
+    //SDL_BlitSurface(titlebar,NULL,screen,NULL);
   }
   sprintf(text,"XP: %i",self->XP);
   DrawText(text,screen,5,5,IndexColor(self->Color),F_Medium);

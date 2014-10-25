@@ -84,11 +84,11 @@ int main(int argc, char *argv[])
   Init_All();
   GiveInfo();
   SpawnAll(1);
-  if(Enemy==NULL)SpawnZombie(Enemy,600,128,2,1);
+  //if(Enemy==NULL)SpawnZombie(Enemy,600,128,2,1);
   if(ThePlayer == NULL)SpawnPlayer(128,128);
-  if(Ammo==NULL)SpawnAmmo(900,128,0);
-  if(Health==NULL)SpawnHealth(1900,128,2);
-  if(Armor==NULL)SpawnArmor(1500,128);
+  //if(Ammo==NULL)SpawnAmmo(900,128,1);
+  //if(Health==NULL)SpawnHealth(1900,128,2);
+  //if(Armor==NULL)SpawnArmor(1500,128);
   do
   {
 	ResetBuffer();
@@ -144,7 +144,8 @@ void Init_All()
   LoadHUD();
   MainMenu();
   printf("woot");
-  GenerateLevel1(320,18);
+  GenerateLevel("maps/level1.txt",320,18);
+  //GenerateLevel1(320,18);
   InitRegionMask(1600,900);
   LoadKeyConfig();  
   DrawSplashScreen();

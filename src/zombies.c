@@ -7,11 +7,13 @@
 extern SDL_Surface *screen;
 extern Entity *ThePlayer;
 Entity *Enemy = NULL;
+//int zcount;
+
 
 void UpdateZombie(Entity *self);
 void ZombieThink(Entity *self);
 
-void SpawnZombie(Entity *owner,int x,int y,int weapon,int affiliation)
+void SpawnZombie(Entity *owner,int x,int y,int subtype,int affiliation)
 {
   Entity *Newent = NULL;
   Newent = NewEntity();
@@ -22,8 +24,6 @@ void SpawnZombie(Entity *owner,int x,int y,int weapon,int affiliation)
   }
   strcpy(Newent->EntName,"Zombie\0");
   Newent->sprite = LoadSprite("images/191x237zombie.png",191,237);
-  //newent->legs = NULL;
-  //SDL_SetColorKey(newent->sprite->image, SDL_SRCCOLORKEY , SDL_MapRGB(newent->sprite->image->format, 0,0,0));
   Newent->owner = owner;
   Newent->update = UpdateZombie;
   Newent->think = ZombieThink;
@@ -34,7 +34,6 @@ void SpawnZombie(Entity *owner,int x,int y,int weapon,int affiliation)
   Newent->fcount = 0;
   Newent->Color = Cyan;
   Newent->frate = 1;
-  //newent->legstate = -1;    /*needed if we don't have separate legs*/
   Newent->state = ST_IDLE;
   Newent->aimdir = F_East;
   Newent->healthmax = 200;
@@ -42,7 +41,10 @@ void SpawnZombie(Entity *owner,int x,int y,int weapon,int affiliation)
   Newent->takedamage = 1;
   Newent->s.x = x;
   Newent->s.y = y;
-  Newent->currentweapon = weapon;
+  Newent->fs.x=x;
+  Newent->fs.y=y;
+  Newent->zcount=subtype;
+  Newent->currentweapon = 0;
   Newent->origin.x = -26;
   Newent->origin.y = -16;
   Newent->v.x = 0;
@@ -55,11 +57,13 @@ void SpawnZombie(Entity *owner,int x,int y,int weapon,int affiliation)
   Newent->Boundingbox.y = 8;
   Newent->Boundingbox.w = 191;
   Newent->Boundingbox.h = 237;
+  Newent->right=1;
+  Newent->ordercount=5;
   Newent->m.x = (x + Newent->origin.x) >> 6;
   Newent->m.y = (y + Newent->origin.y) >> 6;
   Newent->Enemy=1;
-  AddEntToRegion(Newent,Newent->m.x,Newent->m.y);
   Enemy=Newent;
+  AddEntToRegion(Newent,Newent->m.x,Newent->m.y);
 }
 
 void ZombieThink(Entity *self)
@@ -80,34 +84,38 @@ void ZombieThink(Entity *self)
         self->state = ST_WALK;
         if(self->fcount == 0)
         {
-          self->v.x = 5;
-		  self->frame++;
-		  self->face=F_East;
-		  if(self->frame > 4)self->frame = 0;
-          //self->fcount = 1;
-        }
-        else
-        {
-          self->v.x = -5;
-          self->fcount = 0;
-		  self->face=F_West;
-		  self->frame--;
-	      if((self->frame < 5)||(self->frame > 9))self->frame = 9;
+          if(self->right==1){
+			self->v.x = 5;
+			self->frame++;
+			self->face=F_East;
+			if(self->frame > 4)self->frame = 0;
+			self->fcount=1;
+		  }//self->fcount = 1;
+		  if(self->right==0){
+			self->v.x = -5;
+			self->fcount = 0;
+			self->face=F_West;
+			self->frame--;
+			if((self->frame < 5)||(self->frame > 9))self->frame = 9;
+			self->fcount=1;
+		  }
         }
         self->ordercount = 50;
       }
     break;
     case ST_ALERT:
-      if(DistanceBetween(self, ThePlayer) < 120)
+      if(DistanceBetween(self, ThePlayer) < 90)
       {
-        self->aimdir = AimAtTarget(self,ThePlayer);
-        self->state = ST_ATTACK;
+		self->v.x++;
+		self->aimdir = AimAtTarget(self,ThePlayer);
+		self->state = ST_ATTACK;
         return;
       }
       if(self->s.x < ThePlayer->s.x - 32)
       {
         self->v.x = 50;
 		self->face=F_East;
+		self->right=1;
 		self->frame++;
         if(self->frame > 4)self->frame = 0;  
       }
@@ -115,6 +123,7 @@ void ZombieThink(Entity *self)
       {
         self->v.x = -50;
 		self->face=F_West;
+		self->right=0;
 		self->frame--;
         if((self->frame < 5)||(self->frame > 9))self->frame = 9;
       }
@@ -128,13 +137,6 @@ void ZombieThink(Entity *self)
         if(self->frame > 4)self->frame = 0;
         //self->grounded = 0;
       }
-      else if(self->s.y > ThePlayer->s.y + 32)
-      {
-        self->v.x=-20;
-		  //self->v.y = 0;
-		 //self->v.y = -4;
-        //self->grounded = 0;
-      }
 	  else self->v.y=0;
     break;
   }
@@ -142,7 +144,8 @@ void ZombieThink(Entity *self)
 
 void UpdateZombie(Entity *self)
 {
-	//DrawFilledRect(c,d,b,a,Grey,screen);
+	//if(self->owner==NULL)self->owner=self;
+	if(UpdateEntityPosition(self,0)!=1)self->v.y+=20;
 	UpdateEntityPosition(self,0);
   if(!self->grounded)
   {
@@ -161,8 +164,17 @@ void UpdateZombie(Entity *self)
         }
       break;
     case ST_ATTACK:
-      ApplyFriction(self,0.02);
-      FireWeapon(self,self->aimdir);
+      //ApplyFriction(self,0.02);
+	  if(self->right==1){
+		  self->frame++;
+		  if(self->frame>12 || self->frame<10)self->frame=10;
+		  FireWeapon(self,self->aimdir);
+	  }
+	  if(self->right==0){
+		  self->frame--;
+		  if(self->frame>15 || self->frame<13)self->frame=15;
+		  FireWeapon(self,self->aimdir);
+	  }
       self->state = ST_ALERT;
       break;
     
@@ -214,7 +226,21 @@ void UpdateZombie(Entity *self)
         FreeEntity(self);
         return;
       }
-      ExplodingParticle(self->s.x + self->origin.x,self->s.y + self->origin.y,crandom(),crandom());
+      //ExplodingParticle(self->s.x + self->origin.x,self->s.y + self->origin.y,crandom(),crandom());
+	  self->sprite=LoadSprite("images/191x237deadzombie.png",191,237);
+	  if(self->right==0){
+		  self->frame=4;
+	  }
+	 if(self->right==1){
+		  self->frame=0;
+	  }
+	  self->frame++;
+	  if(self->frame==1 || self->frame==5){
+		  self->frame++;
+	  }
+	  if(self->frame==2 || self->frame==6){
+		  self->frame++;
+	  }
     default:
       return;
   }

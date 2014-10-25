@@ -3,12 +3,17 @@
 #include "zombies.h"
 //#include "worldents.h"
 #include "player.h"
-#include "space.h" 
+#include "space.h"
+#include "armor.h"
+#include "healthpack.h"
+#include "ammo.h"
+
 
 extern SDL_Surface *screen;
 extern SDL_Rect Camera;
 extern Level level;
 extern Entity *ThePlayer;
+extern int zcount;
 int MaxSpawns;
 
 Spawn GameSpawns[] = 
@@ -51,7 +56,7 @@ Spawn GameSpawns[] =
     {8,12,36,26},             /*bounding box for wall detection*/
     "zombie",                 /*the name of the entity*/
     "images/191x237zombie.png",      /*the sprite for the main part of the entity*/
-    48,48,                    /*width and height of sprite dimensions
+    191,237,                    /*width and height of sprite dimensions
     {                         /*a list of pointers to the wav files that this entity will produce
       "\0",
       "\0",
@@ -59,6 +64,57 @@ Spawn GameSpawns[] =
       "\0"
     },*/                        
     SpawnZombie,                /*spawn function*/
+    {
+      0,0                     /*offset coordinates to draw the legs at*/
+    },    
+    NULL           
+  },
+  {
+    {8,12,36,26},             /*bounding box for wall detection*/
+    "armor",                 /*the name of the entity*/
+    "images/81x110armor.png",      /*the sprite for the main part of the entity*/
+    81,110,                    /*width and height of sprite dimensions
+    {                         /*a list of pointers to the wav files that this entity will produce
+      "\0",
+      "\0",
+      "\0",
+      "\0"
+    },*/                        
+    SpawnArmor,                /*spawn function*/
+    {
+      0,0                     /*offset coordinates to draw the legs at*/
+    },    
+    NULL           
+  },
+   {
+    {8,12,36,26},             /*bounding box for wall detection*/
+    "health",                 /*the name of the entity*/
+    "images/50x51bandaid.png",      /*the sprite for the main part of the entity*/
+    50,51,                    /*width and height of sprite dimensions
+    {                         /*a list of pointers to the wav files that this entity will produce
+      "\0",
+      "\0",
+      "\0",
+      "\0"
+    },*/                        
+    SpawnHealth,                /*spawn function*/
+    {
+      0,0                     /*offset coordinates to draw the legs at*/
+    },    
+    NULL           
+  },
+  {
+    {8,12,36,26},             /*bounding box for wall detection*/
+    "ammo",                 /*the name of the entity*/
+    "images/73x51ammo9mm.png",      /*the sprite for the main part of the entity*/
+    73,51,                    /*width and height of sprite dimensions
+    {                         /*a list of pointers to the wav files that this entity will produce
+      "\0",
+      "\0",
+      "\0",
+      "\0"
+    },*/                        
+    SpawnAmmo,                /*spawn function*/
     {
       0,0                     /*offset coordinates to draw the legs at*/
     },    
@@ -160,7 +216,7 @@ void LoadSpawnSprites()
   {
     i++;
   }
-  MaxSpawns = i;
+  MaxSpawns = i + zcount;
   for(index = 0;index < MaxSpawns;index++)
   {
     GameSpawns[index].mapsprite = LoadSprite(GameSpawns[index].sprite,GameSpawns[index].sw,GameSpawns[index].sh);
@@ -187,13 +243,15 @@ void DrawSpawn(int index,int sx, int sy)
 
 void SpawnAll(int initial)                               /*after map is loaded, start all entities*/
 {
+  int aindex;
   int sindex;
   int i = 0;
+  aindex=0;
   while(strncmp(GameSpawns[i].EntName,"\0",40 )!=0)
   {
     i++;
   }
-  MaxSpawns = i;
+  MaxSpawns = i + zcount;
 
   for(i = 0;i < level.spawncount;i++)
   {

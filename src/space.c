@@ -4,6 +4,8 @@
 #include "entity.h"
 //#include "audio.h"
 
+int NumTiles;
+
 extern ScreenData  S_Data;
 extern Uint32 rmask,gmask,bmask,amask;
 extern SDL_Rect Camera;
@@ -11,6 +13,7 @@ extern SDL_Surface *bgimage;
 extern SDL_Surface *background;
 SDL_Surface *clipmask;
 Level level;
+int zcount;
 //Mix_Music *BgMusic = NULL;
 
 void CloseLevel()
@@ -29,9 +32,186 @@ void CloseLevel()
   }
 }
 
-void GenerateLevel(int x, int y)
+void GenerateLevel(char *filename,int x, int y)
 {
-  int i,j;
+  int i,j,k,l;
+  FILE *file;
+  char buf[512];
+  if(x > SPACE_W)x = SPACE_W;
+  if(y > SPACE_H)y = SPACE_H;
+  level.width = x;
+  level.height = y;
+  level.tileset = 1;
+  level.infocount = 0;
+  level.spawncount = 0;
+  strcpy(level.levelname,"Level 1");
+  strcpy(level.bgimage,"images/lvltest.png");
+  file = fopen(filename, "r");
+  if(file==NULL)
+  {
+	fprintf(stderr,"Unable to open file for writing: %s",SDL_GetError());
+	exit(0);
+  }
+  memset(level.tilemap,0,sizeof(level.tilemap));
+  NumTiles=0;
+  i=0;
+  j=0;
+  k=0;
+  l=0;
+  zcount=0;
+  while(fscanf(file,"%s",buf)!=EOF)
+  {
+	  if(strcmp(buf,"#")==0)
+	  {
+		  fgets(buf,sizeof(buf),file);
+		  continue;
+	  }
+	  else if(strcmp(buf,"<level>")==0)
+	  {
+		  fgets(buf,sizeof(buf),file);
+		  continue;
+	  }
+	  else if(buf[0]=='1')
+	  {
+		  for(l=0;l<sizeof(buf)/sizeof(buf[0]);l++)
+		  {
+			  if(buf[l]=='1')
+			  {
+				  level.tilemap[j][i]=1;
+				  NumTiles++;
+				  i++;
+			  }
+			  else if(buf[l]=='p')
+			  {
+				  strcpy(level.spawnlist[k].name,"player_start");
+				  level.spawnlist[k].sx=128; //i*50
+				  level.spawnlist[k].sy=128; //j*50
+				  k++;
+				  level.spawncount++;
+				  i++;
+			  }
+			  else if(buf[l]=='a')
+			  {
+				  strcpy(level.spawnlist[k].name,"armor");
+				  level.spawnlist[k].sx= i*50;
+				  level.spawnlist[k].sy=j*50; //j*50
+				  k++;
+				  level.spawncount++;
+				  i++;
+			  }
+			  else if(buf[l]=='h')
+			  {
+				  strcpy(level.spawnlist[k].name,"health");
+				  level.spawnlist[k].UnitInfo=0;
+				  level.spawnlist[k].sx= i*50;
+				  level.spawnlist[k].sy=j*50; //j*50
+				  k++;
+				  level.spawncount++;
+				  i++;
+			  }
+			  else if(buf[l]=='j')
+			  {
+				  strcpy(level.spawnlist[k].name,"health");
+				  level.spawnlist[k].UnitInfo=1;
+				  level.spawnlist[k].sx= i*50;
+				  level.spawnlist[k].sy=j*50; //j*50
+				  k++;
+				  level.spawncount++;
+				  i++;
+			  }
+			  else if(buf[l]=='k')
+			  {
+				  strcpy(level.spawnlist[k].name,"health");
+				  level.spawnlist[k].UnitInfo=2;
+				  level.spawnlist[k].sx= i*50;
+				  level.spawnlist[k].sy=j*50; //j*50
+				  k++;
+				  level.spawncount++;
+				  i++;
+			  }
+			  else if(buf[l]=='q')
+			  {
+				  strcpy(level.spawnlist[k].name,"ammo");
+				  level.spawnlist[k].UnitInfo=0;
+				  level.spawnlist[k].sx= i*50;
+				  level.spawnlist[k].sy=j*50; //j*50
+				  k++;
+				  level.spawncount++;
+				  i++;
+			  }
+			  else if(buf[l]=='w')
+			  {
+				  strcpy(level.spawnlist[k].name,"ammo");
+				  level.spawnlist[k].UnitInfo=1;
+				  level.spawnlist[k].sx= i*50;
+				  level.spawnlist[k].sy=j*50; //j*50
+				  k++;
+				  level.spawncount++;
+				  i++;
+			  }
+			  else if(buf[l]=='e')
+			  {
+				  strcpy(level.spawnlist[k].name,"ammo");
+				  level.spawnlist[k].UnitInfo=2;
+				  level.spawnlist[k].sx= i*50;
+				  level.spawnlist[k].sy=j*50; //j*50
+				  k++;
+				  level.spawncount++;
+				  i++;
+			  }
+			  else if(buf[l]=='r')
+			  {
+				  strcpy(level.spawnlist[k].name,"ammo");
+				  level.spawnlist[k].UnitInfo=3;
+				  level.spawnlist[k].sx= i*50;
+				  level.spawnlist[k].sy=j*50; //j*50
+				  k++;
+				  level.spawncount++;
+				  i++;
+			  }
+			  else if(buf[l]=='t')
+			  {
+				  strcpy(level.spawnlist[k].name,"ammo");
+				  level.spawnlist[k].UnitInfo=4;
+				  level.spawnlist[k].sx= i*50;
+				  level.spawnlist[k].sy=j*50; //j*50
+				  k++;
+				  level.spawncount++;
+				  i++;
+			  }
+			  else if(buf[l]=='z')
+			  {
+				  //char text[40];
+				  //sprintf(text,"zombie%i",(zcount));
+				  strcpy(level.spawnlist[k].name,"zombie");
+				  //level.spawnlist[k].name;
+				  level.spawnlist[k].UnitType=zcount;
+				  level.spawnlist[k].sx= i*50;
+				  level.spawnlist[k].sy=j*50; //j*50
+				  level.spawnlist[k].zcount=zcount;
+				  zcount++;
+				  k++;
+				  level.spawncount++;
+				  i++;
+			  }
+			  else if(buf[l]=='0')
+			  {
+				  i++;
+			  }
+			  else if(buf[l]==';')
+			  {
+				j++;
+				break;
+			  }
+		  }
+		  i=0;
+		  fgets(buf,sizeof(buf),file);
+	  }
+
+  }
+  fclose(file);
+
+  /*
   if(x > SPACE_W)x = SPACE_W;
   if(y > SPACE_H)y = SPACE_H;
   level.width = x;
@@ -52,7 +232,7 @@ void GenerateLevel(int x, int y)
   {
     level.tilemap[0][i] = 1;
     level.tilemap[y - 1][i] = 1;    
-  }
+  }*/
 }
 void GenerateLevel1(int x, int y)
 {

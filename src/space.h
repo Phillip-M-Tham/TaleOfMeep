@@ -13,6 +13,7 @@
 #define MAX_OBJ     128
 #define MAX_ENT     128
 
+
 typedef struct INFO_TAG
 {
   char   name[40];      /*the name of the tag, to keep index hazards away*/
@@ -20,6 +21,7 @@ typedef struct INFO_TAG
   Uint16 UnitInfo;      /*used by some spawn types.*/
   Uint16 UnitType;      /*faction affiliation*/
   char   info[40];      /*info tags will need more info*/
+  int zcount;
 }Tag;
 
 typedef struct LEVEL_STRUCT
@@ -36,7 +38,7 @@ typedef struct LEVEL_STRUCT
   //char bgmusic[40];
 }Level;
 
-void GenerateLevel(int x, int y);
+void GenerateLevel(char *filename,int x, int y);
 void GenerateLevel1(int x, int y);
 void LoadLevel(char *filename);
 void SaveLevel(char *filename);

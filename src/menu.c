@@ -304,7 +304,7 @@ void UpdateDashboard()/*input handling for dashboard*/
                 if((temph >= 16)&&(temph <= SPACE_W))
                 {
                   ClearRegionMask();   /*de-allocate all allocated memory*/
-                  GenerateLevel(tempw,temph);
+                  //GenerateLevel(tempw,temph);
                   InitRegionMask(tempw,temph); /*based on size of map*/
                   DrawLevel();
                   Dashboard.musicplaying = 1;

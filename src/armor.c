@@ -7,11 +7,15 @@ Entity *Armor=NULL;
 
 void UpdateArmor(Entity *self);
 
-Entity *SpawnArmor(int x, int y)
+void SpawnArmor(Entity *owner,int x,int y,int subtype,int affiliation)
 {
 	Entity *newent=NULL;
 	newent=	NewEntity();
-	if(newent == NULL)return NULL;
+	if(newent == NULL){
+		fprintf(stderr,"Unable to generate armor entity; %s",SDL_GetError());
+		return;
+	}
+	newent->owner=owner;
 	newent->s.x=x;
 	newent->s.y=y;
 	newent->sprite=LoadSwappedSprite("images/81x110armor.png",81,110);
@@ -21,6 +25,7 @@ Entity *SpawnArmor(int x, int y)
 	newent->Boundingbox.y=15;
 	newent->Boundingbox.w=81;
 	newent->Boundingbox.h=110;
+	newent->Unit_Type=affiliation;
 	newent->update = UpdateArmor;
 	newent->lifespan=900;
 	newent->used=1;
@@ -32,7 +37,7 @@ Entity *SpawnArmor(int x, int y)
 	newent->m.y = (y + newent->origin.y) >> 6;
 	AddEntToRegion(newent,newent->m.x,newent->m.y);
 	Armor=newent;
-	return newent;
+	//return newent;
 }
 
 void UpdateArmor(Entity *self)
@@ -42,12 +47,12 @@ void UpdateArmor(Entity *self)
   {
 	  self->v.y+=5;
   }
-  self->lifespan--;
+  /*self->lifespan--;
   if(self->lifespan <= 0)
   {
     FreeEntity(self);
     return;  
-  }
+  }*/
   if(ThePlayer!=NULL)
   {
 	SDL_Rect bbox,bbox2;
@@ -61,12 +66,12 @@ void UpdateArmor(Entity *self)
 	bbox.h=self->Boundingbox.h;
 	if(Collide(bbox,bbox2)==1){
 		printf("YOU GOT Armor");
-		if(self->armor < self->armormax)
+		if(ThePlayer->armor < ThePlayer->armormax)
 		{
-			self->armor+=100;
-			if(self->armor > self->armormax)
+			ThePlayer->armor+=100;
+			if(ThePlayer->armor > ThePlayer->armormax)
 			{
-				self->armor=self->armormax;
+				ThePlayer->armor=ThePlayer->armormax;
 			}
 			FreeEntity(self);
 		}				

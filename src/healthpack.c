@@ -7,21 +7,25 @@ Entity *Health=NULL;
 
 void UpdateHealthPack(Entity *self);
 
-Entity *SpawnHealth(int x, int y, int type)
+void SpawnHealth(Entity *owner,int x,int y,int subtype,int affiliation)
 {
 	Entity *newent=NULL;
 	newent=	NewEntity();
-	if(newent == NULL)return NULL;
+	if(newent == NULL)
+	{
+		fprintf(stderr,"Unable to generate healthpack entity; %s",SDL_GetError());
+		return;
+	}
 	newent->s.x=x;
 	newent->s.y=y;
-	switch(type)
+	switch(subtype)
 	{
 		case 0:
 			newent->sprite=LoadSwappedSprite("images/50x51bandaid.png",50,51);
-			newent->origin.x = 3;
-			newent->origin.y = 3;
-			newent->Boundingbox.x=20;
-			newent->Boundingbox.y=20;
+			newent->origin.x = 5;
+			newent->origin.y = 5;
+			newent->Boundingbox.x=15;
+			newent->Boundingbox.y=15;
 			newent->Boundingbox.w=50;
 			newent->Boundingbox.h=51;
 			newent->update = UpdateHealthPack;
@@ -31,8 +35,8 @@ Entity *SpawnHealth(int x, int y, int type)
 			newent->sprite=LoadSwappedSprite("images/76x68medbox.png",76,68);
 			newent->origin.x = 5;
 			newent->origin.y = 5;
-			newent->Boundingbox.x=25;
-			newent->Boundingbox.y=25;
+			newent->Boundingbox.x=15;
+			newent->Boundingbox.y=15;
 			newent->Boundingbox.w=76;
 			newent->Boundingbox.h=68;
 			newent->update = UpdateHealthPack;
@@ -40,8 +44,8 @@ Entity *SpawnHealth(int x, int y, int type)
 			break;
 		case 2:
 			newent->sprite=LoadSwappedSprite("images/36x101dew.png",36,101);
-			newent->origin.x = 10;
-			newent->origin.y = 10;
+			newent->origin.x = 5;
+			newent->origin.y = 5;
 			newent->Boundingbox.x=15;
 			newent->Boundingbox.y=15;
 			newent->Boundingbox.w=36;
@@ -61,7 +65,6 @@ Entity *SpawnHealth(int x, int y, int type)
 	newent->m.y = (y + newent->origin.y) >> 6;
 	AddEntToRegion(newent,newent->m.x,newent->m.y);
 	Health=newent;
-	return newent;
 }
 
 void UpdateHealthPack(Entity *self)
@@ -71,12 +74,12 @@ void UpdateHealthPack(Entity *self)
   {
 	  self->v.y+=5;
   }
-  self->lifespan--;
+  /*self->lifespan--;
   if(self->lifespan <= 0)
   {
     FreeEntity(self);
     return;  
-  }
+  }*/
   if(ThePlayer!=NULL)
   {
 	SDL_Rect bbox,bbox2;
@@ -90,14 +93,14 @@ void UpdateHealthPack(Entity *self)
 	bbox.h=self->Boundingbox.h;
 	if(Collide(bbox,bbox2)==1){
 		printf("YOU GOT Health");
-		if(self->health < self->healthmax)
+		if(ThePlayer->health < ThePlayer->healthmax)
 		{
 			if(self->healthtype==0)ThePlayer->health+=10;
 			if(self->healthtype==1)ThePlayer->health+=25;
 			if(self->healthtype==2)ThePlayer->health+=50;
-			if(self->health > self->healthmax)
+			if(ThePlayer->health > ThePlayer->healthmax)
 			{
-				self->health=self->healthmax;
+				ThePlayer->health=ThePlayer->healthmax;
 			}
 			FreeEntity(self);
 		}				

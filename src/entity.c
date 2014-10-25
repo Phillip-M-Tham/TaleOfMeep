@@ -32,6 +32,7 @@ extern Level level;
 extern int jumpreset;
 
 Entity EntityList[MAXENTITIES];  /*the last column is the world*/
+//Entity Zlist[MAXZOMBIES];
 
 Region RegionMask[SPACE_H + 1][SPACE_W + 1];/*Pointers to buckets, which point to entities, by location, with chaining*/
 int Region_W = 0;
@@ -61,6 +62,7 @@ void InitEntityList()
     EntityList[i].target = NULL;
     EntityList[i].update = NULL;
 	EntityList[i].weapon = NULL;
+	EntityList[i].zcount=0;
     /*for(j = 0;j < SOUNDSPERENT;j++)
     {
       EntityList[i].sound[j] = NULL;

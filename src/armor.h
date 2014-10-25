@@ -2,6 +2,6 @@
 #define _ARMOR_
 #include "entity.h"
 
-Entity *SpawnArmor(int x,int y);
+void SpawnArmor(Entity *owner,int x,int y,int subtype,int affiliation);
 
 #endif

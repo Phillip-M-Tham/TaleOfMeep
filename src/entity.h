@@ -10,6 +10,7 @@
 #define MAXENTITIES	8192
 #define MAXSTATES	10
 #define PERSISTENCE	8
+//#define MAXZOMBIES  100
 
 #define random()  ((rand () & 0x7fff) / ((float)0x7fff))
 #define crandom() (2.0 * (random() - 0.5))
@@ -137,6 +138,7 @@ typedef struct ENTITY_T
 	int total762;
 	int ammotype;
 	int healthtype;
+	int zcount;
 }Entity;
 
 //startup and clean up

@@ -2,6 +2,6 @@
 #define _AMMO_
 #include "entity.h"
 
-Entity *SpawnAmmo(int x,int y, int type);
+void SpawnAmmo(Entity *owner, int sx, int sy,int subtype, int faction);
 
 #endif

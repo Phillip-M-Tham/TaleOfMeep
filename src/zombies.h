@@ -6,6 +6,6 @@
  */
 
 
-void SpawnZombie(Entity *owner,int x,int y,int weapon,int affiliation);
+void SpawnZombie(Entity *owner,int x,int y,int subtype,int affiliation);
 
 #endif

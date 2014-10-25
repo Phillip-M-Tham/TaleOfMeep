@@ -16,6 +16,7 @@
 //Sound *WeaponSounds[NumWeapons * 2];
 extern SDL_Rect Camera;
 extern SDL_Surface *screen;
+extern Entity *ThePlayer;
 
 void GetSpawnByDir(Entity *self,int *sx,int *sy,int offset,int dir);
 
@@ -67,7 +68,7 @@ Weapon WeaponList[] =
     "Sword",          /*weapon's name*/
     //1,                 /*how long it will take to cool down between shots*/
     //16,                 /*Ultimate cooldown*/
-    8,                  /*how much damage each projectile will deal*/
+    20,                  /*how much damage each projectile will deal*/
     0.15,                  /*how much kick the weapon carries*/
     18,                 /*speed*/
     0.15,                /*how much variation can be expeted between each bullet.*/
@@ -853,6 +854,79 @@ void Punch(Entity *self,Weapon *weapon,int direction)
 			int sx,sy;
 			GetSpawnByDir(self,&sx,&sy,0,direction);
 			SpawnBullet(self,sx+=145,sy+=195,dir + crandom() * weapon->spread,weapon->speed ,weapon->damage,weapon->kick, weapon->size, self->Color, self->Unit_Type,7);
+		}
+		if(self->Enemy==1)
+		{
+			if(self->aimdir==F_East)
+			{
+				float dir = GetRadFromDir(direction);
+				int sx,sy;
+				GetSpawnByDir(self,&sx,&sy,0,direction);
+				SpawnBullet(self,sx+=225,sy+=100,dir + crandom() * weapon->spread,weapon->speed ,weapon->damage,weapon->kick, weapon->size, self->Color, self->Unit_Type,0);
+			}
+			if(self->aimdir==F_West)
+			{
+				float dir = GetRadFromDir(direction);
+				int sx,sy;
+				GetSpawnByDir(self,&sx,&sy,0,direction);
+				SpawnBullet(self,sx-=80,sy+=100,dir + crandom() * weapon->spread,weapon->speed ,weapon->damage,weapon->kick, weapon->size, self->Color, self->Unit_Type,5);
+			}
+			if(self->aimdir==F_NW)
+			{
+				float dir = GetRadFromDir(direction);
+				int sx,sy;
+				GetSpawnByDir(self,&sx,&sy,0,direction);
+				SpawnBullet(self,sx-=80,sy,dir + crandom() * weapon->spread,weapon->speed ,weapon->damage,weapon->kick, weapon->size, self->Color, self->Unit_Type,2);
+			}
+			if(self->aimdir==F_NE)
+			{
+				float dir = GetRadFromDir(direction);
+				int sx,sy;
+				GetSpawnByDir(self,&sx,&sy,0,direction);
+				SpawnBullet(self,sx+=220,sy,dir + crandom() * weapon->spread,weapon->speed ,weapon->damage,weapon->kick, weapon->size, self->Color, self->Unit_Type,1);
+			}
+			if(self->aimdir==F_SE)
+			{
+				float dir = GetRadFromDir(direction);
+				int sx,sy;
+				GetSpawnByDir(self,&sx,&sy,0,direction);
+				SpawnBullet(self,sx+=220,sy+=190,dir + crandom() * weapon->spread,weapon->speed ,weapon->damage,weapon->kick, weapon->size, self->Color, self->Unit_Type,4);
+			}
+			if(self->aimdir==F_SW)
+			{
+				float dir = GetRadFromDir(direction);
+				int sx,sy;
+				GetSpawnByDir(self,&sx,&sy,0,direction);
+				SpawnBullet(self,sx-=80,sy+=190,dir + crandom() * weapon->spread,weapon->speed ,weapon->damage,weapon->kick, weapon->size, self->Color, self->Unit_Type,3);
+			}
+			if(self->aimdir==F_North && self->right==1)
+			{
+				float dir = GetRadFromDir(direction);
+				int sx,sy;
+				GetSpawnByDir(self,&sx,&sy,0,direction);
+				SpawnBullet(self,sx+=140,sy,dir + crandom() * weapon->spread,weapon->speed ,weapon->damage,weapon->kick, weapon->size, self->Color, self->Unit_Type,6);
+			}
+			if(self->aimdir==F_North)
+			{
+				float dir = GetRadFromDir(direction);
+				int sx,sy;
+				GetSpawnByDir(self,&sx,&sy,0,direction);
+				SpawnBullet(self,sx+=20,sy,dir + crandom() * weapon->spread,weapon->speed ,weapon->damage,weapon->kick, weapon->size, self->Color, self->Unit_Type,6);
+			}
+			if(self->aimdir==F_South && self->right==0)
+			{
+				float dir = GetRadFromDir(direction);
+				int sx,sy;
+				GetSpawnByDir(self,&sx,&sy,0,direction);
+				SpawnBullet(self,sx+=5,sy+=195,dir + crandom() * weapon->spread,weapon->speed ,weapon->damage,weapon->kick, weapon->size, self->Color, self->Unit_Type,7);
+			}
+			if(self->aimdir==F_South && self->right==1)
+			{
+				float dir = GetRadFromDir(direction);
+				int sx,sy;
+				GetSpawnByDir(self,&sx,&sy,0,direction);
+				SpawnBullet(self,sx+=145,sy+=195,dir + crandom() * weapon->spread,weapon->speed ,weapon->damage,weapon->kick, weapon->size, self->Color, self->Unit_Type,7);
+			}
 		}
 }
 

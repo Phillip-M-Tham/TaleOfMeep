@@ -2,6 +2,6 @@
 #define _HEALTH_
 #include "entity.h"
 
-Entity *SpawnHealth(int x,int y, int type);
+void SpawnHealth(Entity *owner,int x,int y,int subtype,int affiliation);
 
 #endif

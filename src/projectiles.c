@@ -3,6 +3,7 @@
 #include <string.h>
 #include "particle.h"
 #include "projectiles.h"
+#include "space.h"
 
 void UpdateSlash(Entity *self);
 void UpdatePunch(Entity *self);
@@ -23,6 +24,9 @@ void UpdateBlade(Entity *self);
 extern Uint32 NOW;
 extern Entity EntityList[];
 extern Entity *Enemy;
+extern Entity *ThePlayer;
+extern Level level;
+Entity *Bullet = NULL;
 
 /*this will be a generic spawn function that will set some basic info to save code*/
 Entity *SpawnProjectile(int sx,int sy,float angle,float speed,float accel,int damage,int dtype,float kick)
@@ -77,94 +81,6 @@ Entity *SpawnProjectile(int sx,int sy,float angle,float speed,float accel,int da
   //newent->lifespan = 12;
   return newent;
 }*/
-
-/*************************************************************
-              
-                       Sword Blade
-
- *************************************************************/
-
-Entity *SpawnBlade(Entity *owner,int sx,int sy,float direction,float speed,int length,int damage,float kick,int color,int UType)
-{
-  Entity *newent = NULL;
-  newent = SpawnProjectile(sx - 24,sy - 24,direction,speed,0,damage,DT_Physical,kick);
-  if(newent == NULL)return NULL;
-  strcpy(newent->EntName,"Blade\0");
-  newent->sprite = LoadSwappedSprite("images/blade1.png",48,48);
-  //newent->sound[SF_ALERT] = LoadSound("sounds/grenlb1b.wav",SDL_MIX_MAXVOLUME>>3);
-  newent->update = UpdateBlade;
-  newent->UpdateRate = 30;
-  newent->movespeed = speed;
-  newent->owner = owner;
-  newent->Color = color;
-  //newent->legstate = -1;    /*needed if we don't have separate legs*/
-  newent->Unit_Type = UType;
-  //newent->lifespan = speed;
-  //newent->legstate = 1;
-  //newent->Ls.x = (newent->v.x * 2);
-  //newent->Ls.y = (newent->v.y * 2);
-  newent->origin.x = 24 + (newent->v.x * 2);
-  newent->origin.y = 24 + (newent->v.y * 2);  
-  Get16Face(newent);
-  newent->frame = newent->face - 1;
-  if(newent->frame < 0)newent->frame = 15;
-  newent->trailhead = 0;
-  newent->traillen = 0;
-  newent->trail[0].x = sx - 24;
-  newent->trail[0].y = sy - 24;
-  newent->maxtraillen = MAXTRAIL>>1;
-  newent->thick = 4;
-  newent->Boundingbox.x = 2;
-  newent->Boundingbox.y = 2;
-  newent->Boundingbox.w = 44;
-  newent->Boundingbox.h = 44;
-  newent->size.x = 44;
-  newent->size.y = 44;
-  newent->m.x = (sx + newent->origin.x) >> 6;
-  newent->m.y = (sy + newent->origin.y) >> 6;
-  AddEntToRegion(newent,newent->m.x,newent->m.y);
-  return newent;
-  
-}
-
-void UpdateBlade(Entity *self)
-{
-  Entity *target = NULL;
-  Coord temp;
-  temp.x = self->v.x;
-  temp.y = self->v.y;
-  self->v.x += self->owner->v.x;
-  self->v.y += self->owner->v.y;
-  //self->lifespan--;
-  if(UpdateEntityPosition(self,0))
-  {
-  //  Mix_PlayChannel(Mix_GroupAvailable(2),self->sound[SF_ALERT]->sound,0);
-  }
-  self->v.x = temp.x;
-  self->v.y = temp.y;
-  //if(self->lifespan == self->movespeed>>1)
-  {
-    self->v.x *= -1;
-    self->v.y *= -1;
-    self->frame = (self->frame + 1)%16;
-  }
-  //if(self->lifespan <= 0)
-  {
-    FreeEntity(self);
-    return;
-  }
-  target = GetTouchingEnt(self);
-  if(target != NULL)
-  {
-   // Mix_PlayChannel(Mix_GroupAvailable(2),self->sound[SF_ALERT]->sound,0);
-    DamageTarget(self->owner,self,target,self->damage,self->dtype,self->kick,self->v.x,self->v.y);
-  }
-}
-
-
-
-
-
 
     
 /*************************************************************
@@ -297,6 +213,7 @@ Entity *SpawnBullet(Entity *owner,int sx,int sy,float angle,float speed,int dama
 
 void UpdateBullet(Entity *self)
 {
+  int i;
   Entity *target = NULL;
   self->lifespan--;
   if(self->lifespan <= 0)
@@ -310,79 +227,120 @@ void UpdateBullet(Entity *self)
     FreeEntity(self);
     return;  
   }
-  if(Enemy!=NULL)
+  if(self->owner==ThePlayer)
   {
-	SDL_Rect bbox,bbox2;
-	bbox2.x=Enemy->s.x;
-	bbox2.y=Enemy->s.y;
-	bbox2.h=Enemy->Boundingbox.w;
-	bbox2.w=Enemy->Boundingbox.h;
-	bbox.x=self->s.x;
-	bbox.y=self->s.y;
-	bbox.w=self->Boundingbox.w;
-	bbox.h=self->Boundingbox.h;
-	if(Collide(bbox,bbox2)==1){
-		printf("YOU HIT ME :(");
-		target=Enemy;
-		DamageTarget(self->owner,self,target,self->damage,self->dtype,self->kick,self->v.x,self->v.y);
-		FreeEntity(self);
+	  for(i = 0;i < MAXENTITIES; i++)
+	{
+		if(EntityList[i].Enemy==1 && EntityList[i].used==1)
+		{
+			SDL_Rect bbox,bbox2;
+			bbox2.x=(int)EntityList[i].s.x;
+			bbox2.y=(int)EntityList[i].s.y;
+			bbox2.h=(int)EntityList[i].Boundingbox.w;
+			bbox2.w=(int)EntityList[i].Boundingbox.h;
+			bbox.x=(int)self->s.x;
+			bbox.y=(int)self->s.y;
+			bbox.w=(int)self->Boundingbox.w;
+			bbox.h=(int)self->Boundingbox.h;
+			if(Collide(bbox,bbox2)==1)
+			{
+				target=&EntityList[i];
+				printf("YOU HIT ME :)");
+				DamageTarget(self->owner,self,target,self->damage,self->dtype,self->kick,self->v.x,self->v.y);
+				FreeEntity(self);
+			}
+			target=NULL;
+		}
+		
 	}
   }
-  /*target = GetTouchingEnt(self);
-  if(target != NULL)
-  {
-    printf("HOLYSHIT");
-	DamageTarget(self->owner,self,target,self->damage,self->dtype,self->kick,self->v.x,self->v.y);
-    FreeEntity(self);    
-  }*/
+
 }
 
 void UpdatePunch(Entity *self)
 {
+  int i;
   Entity *target = NULL;
-  if(Enemy!=NULL)
+  if(self->owner==ThePlayer)
   {
-	SDL_Rect bbox,bbox2;
-	bbox2.x=Enemy->s.x;
-	bbox2.y=Enemy->s.y;
-	bbox2.h=Enemy->Boundingbox.w;
-	bbox2.w=Enemy->Boundingbox.h;
-	bbox.x=self->s.x;
-	bbox.y=self->s.y;
-	bbox.w=self->Boundingbox.w;
-	bbox.h=self->Boundingbox.h;
-	if(Collide(bbox,bbox2)==1){
-		printf("YOU HIT ME :(");
-		target=Enemy;
-		DamageTarget(self->owner,self,target,self->damage,self->dtype,self->kick,self->v.x,self->v.y);
-		FreeEntity(self);
+	for(i = 0;i < MAXENTITIES; i++)
+	{
+		if(EntityList[i].Enemy==1 && EntityList[i].used==1)
+		{
+			SDL_Rect bbox,bbox2;
+			bbox2.x=(int)EntityList[i].s.x;
+			bbox2.y=(int)EntityList[i].s.y;
+			bbox2.h=(int)EntityList[i].Boundingbox.w;
+			bbox2.w=(int)EntityList[i].Boundingbox.h;
+			bbox.x=(int)self->s.x;
+			bbox.y=(int)self->s.y;
+			bbox.w=(int)self->Boundingbox.w;
+			bbox.h=(int)self->Boundingbox.h;
+			if(Collide(bbox,bbox2)==1)
+			{
+				target=&EntityList[i];
+				printf("YOU HIT ME :)");
+				DamageTarget(self->owner,self,target,self->damage,self->dtype,self->kick,self->v.x,self->v.y);
+				FreeEntity(self);
+			}
+			target=NULL;
+		}
+		
 	}
+	FreeEntity(self);
   }
-  FreeEntity(self);
+  if(self->owner!=ThePlayer){
+		SDL_Rect bbox,bbox2;
+		bbox2.x=(int)ThePlayer->s.x;
+		bbox2.y=(int)ThePlayer->s.y;
+		bbox2.h=(int)ThePlayer->Boundingbox.w;
+		bbox2.w=(int)ThePlayer->Boundingbox.h;
+		bbox.x=(int)self->s.x;
+		bbox.y=(int)self->s.y;
+		bbox.w=(int)self->Boundingbox.w;
+		bbox.h=(int)self->Boundingbox.h;
+		if(Collide(bbox,bbox2)==1)
+		{
+			printf("YOU HIT THE GIRL :(");
+			target=ThePlayer;
+			DamageTarget(self->owner,self,target,self->damage,self->dtype,self->kick,self->v.x,self->v.y);
+			FreeEntity(self);
+		}
+		FreeEntity(self);
+  }
 }
 
 void UpdateSlash(Entity *self)
 {
+  int i;
   Entity *target = NULL;
-  if(Enemy!=NULL)
+  if(self->owner==ThePlayer)
   {
-	SDL_Rect bbox,bbox2;
-	bbox2.x=Enemy->s.x;
-	bbox2.y=Enemy->s.y;
-	bbox2.h=Enemy->Boundingbox.w;
-	bbox2.w=Enemy->Boundingbox.h;
-	bbox.x=self->s.x;
-	bbox.y=self->s.y;
-	bbox.w=self->Boundingbox.w;
-	bbox.h=self->Boundingbox.h;
-	if(Collide(bbox,bbox2)==1){
-		printf("YOU HIT ME :(");
-		target=Enemy;
-		DamageTarget(self->owner,self,target,self->damage,self->dtype,self->kick,self->v.x,self->v.y);
-		FreeEntity(self);
+	for(i = 0;i < MAXENTITIES; i++)
+	{
+		if(EntityList[i].Enemy==1 && EntityList[i].used==1)
+		{
+			SDL_Rect bbox,bbox2;
+			bbox2.x=EntityList[i].s.x;
+			bbox2.y=EntityList[i].s.y;
+			bbox2.h=EntityList[i].Boundingbox.w;
+			bbox2.w=EntityList[i].Boundingbox.h;
+			bbox.x=self->s.x;
+			bbox.y=self->s.y;
+			bbox.w=self->Boundingbox.w;
+			bbox.h=self->Boundingbox.h;
+			if(Collide(bbox,bbox2)==1)
+			{
+				target=&EntityList[i];
+				printf("YOU HIT ME :)");
+				DamageTarget(self->owner,self,target,self->damage,self->dtype,self->kick,self->v.x,self->v.y);
+				FreeEntity(self);
+			}
+			target=NULL;
+		}
 	}
+	FreeEntity(self);
   }
-  FreeEntity(self);
 }
 /*************************************************************
               
