@@ -7,6 +7,8 @@
 #include "armor.h"
 #include "healthpack.h"
 #include "ammo.h"
+#include "wolf.h"
+#include "ninja.h"
 
 
 extern SDL_Surface *screen;
@@ -115,6 +117,40 @@ Spawn GameSpawns[] =
       "\0"
     },*/                        
     SpawnAmmo,                /*spawn function*/
+    {
+      0,0                     /*offset coordinates to draw the legs at*/
+    },    
+    NULL           
+  },
+  {
+    {8,12,36,26},             /*bounding box for wall detection*/
+    "wolf",                 /*the name of the entity*/
+    "images/92x134wolf.png",      /*the sprite for the main part of the entity*/
+    92,134,                    /*width and height of sprite dimensions
+    {                         /*a list of pointers to the wav files that this entity will produce
+      "\0",
+      "\0",
+      "\0",
+      "\0"
+    },*/                        
+    SpawnWolf,                /*spawn function*/
+    {
+      0,0                     /*offset coordinates to draw the legs at*/
+    },    
+    NULL           
+  },
+  {
+    {8,12,36,26},             /*bounding box for wall detection*/
+    "ninja",                 /*the name of the entity*/
+    "images/650x389ninja2.png",      /*the sprite for the main part of the entity*/
+    650,389,                    /*width and height of sprite dimensions
+    {                         /*a list of pointers to the wav files that this entity will produce
+      "\0",
+      "\0",
+      "\0",
+      "\0"
+    },*/                        
+    SpawnNinja,                /*spawn function*/
     {
       0,0                     /*offset coordinates to draw the legs at*/
     },    

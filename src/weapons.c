@@ -51,9 +51,9 @@ Weapon WeaponList[] =
     "Hands",          /*weapon's name*/
     //8,                 /*how long it will take to cool down between shots*/
     //26,                 /*Ultimate cooldown*/
-    8,                  /*how much damage each projectile will deal*/
+    20,                  /*how much damage each projectile will deal*/
     0.2,                  /*how much kick the weapon carries*/
-    16,                 /*speed*/
+    30,                 /*speed*/
     0.2,                /*how much variation can be expeted between each bullet.*/
     6,                  /*volume of attack*/
     0,                  /*if the projectiles produced will be affected by gravity*/
@@ -68,9 +68,9 @@ Weapon WeaponList[] =
     "Sword",          /*weapon's name*/
     //1,                 /*how long it will take to cool down between shots*/
     //16,                 /*Ultimate cooldown*/
-    20,                  /*how much damage each projectile will deal*/
+    90,                  /*how much damage each projectile will deal*/
     0.15,                  /*how much kick the weapon carries*/
-    18,                 /*speed*/
+    35,                 /*speed*/
     0.15,                /*how much variation can be expeted between each bullet.*/
     3,                  /*volume of attack*/
     0,                  /*if the projectiles produced will be affected by gravity*/
@@ -85,9 +85,9 @@ Weapon WeaponList[] =
     "Glock",          /*weapon's name*/
    // 5,                  /*how long it will take to cool down between shots*/
    // 24,                 /*Ultimate cooldown*/
-    18,                  /*how much damage each projectile will deal*/
+    40,                  /*how much damage each projectile will deal*/
     0.1,                  /*how much kick the weapon carries*/
-    24,                   /*speed*/
+    120,                   /*speed*/
     0.01,                /*how much variation can be expeted between each bullet.*/
     1,                  /*volume of attack*/
     0,                  /*if the projectiles produced will be affected by gravity*/
@@ -102,9 +102,9 @@ Weapon WeaponList[] =
     "Desert Eagle",          /*weapon's name*/
     //4,                  /*how long it will take to cool down between shots*/
     //24,                 /*Ultimate cooldown*/
-    12,                  /*how much damage each projectile will deal*/
+    75,                  /*how much damage each projectile will deal*/
     0,                  /*how much kick the weapon carries*/
-    18,                   /*speed*/
+    130,                   /*speed*/
     0,                /*how much variation can be expeted between each bullet.*/
     1,                  /*volume of attack*/
     0,                  /*if the projectiles produced will be affected by gravity*/
@@ -136,9 +136,9 @@ Weapon WeaponList[] =
     "ACR",          /*weapon's name*/
    // 8,                  /*how long it will take to cool down between shots*/
    // 30,                 /*Ultimate cooldown*/
-    25,                  /*how much damage each projectile will deal*/
+    40,                  /*how much damage each projectile will deal*/
     1,                  /*how much kick the weapon carries*/
-    20,                   /*speed*/
+    140,                   /*speed*/
     0,                /*how much variation can be expeted between each bullet.*/
     3,                  /*depth of search fo a target, KEEP IT SMALL*/
     0,                  /*if the projectiles produced will be affected by gravity*/
@@ -153,9 +153,9 @@ Weapon WeaponList[] =
     "M3",          /*weapon's name*/
     //2,                  /*how long it will take to cool down between shots*/
     //24,                 /*Ultimate cooldown*/
-    7,                  /*how much damage each projectile will deal*/
+    70,                  /*how much damage each projectile will deal*/
     0.2,                  /*how much kick the weapon carries*/
-    12,                   /*speed*/
+    130,                   /*speed*/
     0.15,                /*how much variation can be expeted between each bullet.*/
     9,                  /*volume of attack*/
     0,                  /*if the projectiles produced will be affected by gravity*/

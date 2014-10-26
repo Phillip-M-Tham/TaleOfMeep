@@ -3,7 +3,7 @@
 #include <math.h>
 #include "entity.h"
 #include "space.h"
-
+#include "player.h"
 /*
   Entity function definitions
 */
@@ -30,6 +30,7 @@ extern SDL_Rect Camera;
 extern Uint32 NOW;
 extern Level level;
 extern int jumpreset;
+extern Entity *ThePlayer;
 
 Entity EntityList[MAXENTITIES];  /*the last column is the world*/
 //Entity Zlist[MAXZOMBIES];
@@ -289,31 +290,53 @@ void DamageTarget(Entity *attacker,Entity *inflictor,Entity *defender,int damage
   switch(dtype)
   {
     case DT_Physical:
-      damage -= defender->armor;
+      //damage -= defender->armor;
       break;
     case DT_Bullet:
-      damage -= defender->armor;
+      //damage -= defender->armor;
       break;
     case DT_Sword:
-      damage -= defender->armor;
+      //damage -= defender->armor;
       break;
 	case DT_Laser:
-	  damage -=defender->armor;
+	 // damage -=defender->armor;
+		break;
   }
-  if(damage <= 0)damage = 1;/*you will at LEAST take 1 damage*/
-  defender->health -= damage;
-  if(kick > 1)kick = 1;
-  defender->v.x += (kickx * kick);
-  defender->v.y += (kicky * kick);
-  if(defender->EntClass == EC_AI)defender->state = ST_ALERT;
-  if(defender->health <= 0)
+  if(defender!=ThePlayer)
   {
-    defender->state = ST_DIE;
-    defender->takedamage = 0;
-    if(defender->EntClass == EC_AI)
-    {
-      attacker->KillCount++;
-    }
+	if(damage <= 0)damage = 1;/*you will at LEAST take 1 damage*/
+	defender->health -= damage;
+	if(kick > 1)kick = 1;
+	defender->v.x += (kickx * kick);
+	defender->v.y += (kicky * kick);
+	if(defender->EntClass == EC_AI)defender->state = ST_ALERT;
+	if(defender->health <= 0)
+	{
+		defender->state = ST_DIE;
+		defender->takedamage = 0;
+		if(defender->EntClass == EC_AI)
+		{
+			attacker->KillCount++;
+		}
+	}
+  }
+  if(defender==ThePlayer)
+  {
+	  defender->armor-=damage;
+	  if(defender->armor<0)
+	  {
+		defender->health-=damage;
+		defender->armor=0;
+	  }
+	  if(defender->health <= 0)
+	  {
+		defender->state = ST_DIE;
+		defender->takedamage = 0;
+		if(defender->EntClass == EC_AI)
+		{
+			attacker->KillCount++;
+		}
+	  }
   }
 }
 

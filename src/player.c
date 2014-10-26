@@ -1443,6 +1443,10 @@ void UpdatePlayer(Entity *self)
 	  sprintf(text,"%i / %i",self->shells,self->total12ga);
 	  DrawText(text,screen,50,20,IndexColor(self->Color),F_Large);
   }
+  sprintf(text,"Armor :%i ",self->armor);
+  DrawText(text,screen,1000,20,IndexColor(self->Color),F_Large);
+  sprintf(text,"Health :%i ",self->health);
+  DrawText(text,screen,1300,20,IndexColor(self->Color),F_Large);
 //  printf("%i",self->KillCount);
   UpdateEntityPosition(self,0);
   if(self->jump==0)

@@ -22,6 +22,7 @@ typedef struct INFO_TAG
   Uint16 UnitType;      /*faction affiliation*/
   char   info[40];      /*info tags will need more info*/
   int zcount;
+  int ncount;
 }Tag;
 
 typedef struct LEVEL_STRUCT

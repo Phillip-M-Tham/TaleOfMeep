@@ -254,6 +254,25 @@ void UpdateBullet(Entity *self)
 		
 	}
   }
+ if(self->owner!=ThePlayer){
+		SDL_Rect bbox,bbox2;
+		bbox2.x=(int)ThePlayer->s.x;
+		bbox2.y=(int)ThePlayer->s.y;
+		bbox2.h=(int)ThePlayer->Boundingbox.w;
+		bbox2.w=(int)ThePlayer->Boundingbox.h;
+		bbox.x=(int)self->s.x;
+		bbox.y=(int)self->s.y;
+		bbox.w=(int)self->Boundingbox.w;
+		bbox.h=(int)self->Boundingbox.h;
+		if(Collide(bbox,bbox2)==1)
+		{
+			printf("YOU HIT THE GIRL :(");
+			target=ThePlayer;
+			DamageTarget(self->owner,self,target,self->damage,self->dtype,self->kick,self->v.x,self->v.y);
+			FreeEntity(self);
+		}
+		FreeEntity(self);
+  }
 
 }
 

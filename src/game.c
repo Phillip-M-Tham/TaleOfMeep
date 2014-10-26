@@ -18,6 +18,7 @@
 #include "ammo.h"
 #include "healthpack.h"
 #include "armor.h"
+#include "wolf.h"
 //TESTing
 #define MAXSTATE 1
 
@@ -32,6 +33,7 @@ extern Entity *Health;
 extern Entity *Armor;
 extern Level level;
 extern SDL_Surface *clipmask;
+extern int nextlevel;
 int drawents = 1,drawboxes = 0;
 int windowed = 1;
 int lvl=0;
@@ -45,7 +47,7 @@ void Init_All();
 void Update_ALL();
 int Think_ALL();
 void Draw_ALL();
-void DrawSplashScreen();
+void DrawSplashScreen(int num);
 void GiveInfo();
 void StartLvl(int LevelNum,int Enemies);
 void PopUpWindow(Sprite *sprite,char *text,Uint32 Color,int pwait);
@@ -109,6 +111,14 @@ int main(int argc, char *argv[])
       NewMessage("Screen Shot Saved",IndexColor(LightBlue));
     }
     NextFrame();
+	if(Nextlevel==1)
+	{
+		//ClearEntities();
+		//ClearRegionMask();
+		//DrawSplashScreen(2);
+		//GenerateLevel("maps/level1.txt",320,18);
+		Nextlevel=0;
+	}
   }while(!done);
    
   exit(0);
@@ -148,7 +158,7 @@ void Init_All()
   //GenerateLevel1(320,18);
   InitRegionMask(1600,900);
   LoadKeyConfig();  
-  DrawSplashScreen();
+  DrawSplashScreen(1);
   DrawLevel();
   //if(mapeditmode)Mix_HaltMusic();
   //PrecacheProjSounds();
@@ -201,10 +211,12 @@ void PopUpWindow(Sprite *splash,char *text,Uint32 Color,int frame)
   
 }
 
-void DrawSplashScreen()
+
+void DrawSplashScreen(int num)
 {
   SDL_Surface *splash;
-  splash = IMG_Load("images/level1splash.png");
+  if(num==1)splash = IMG_Load("images/level1splash.png");
+  if(num==2)splash = IMG_Load("images/splash5.png");
   if(splash != NULL)
   {
     SDL_BlitSurface(splash,NULL,screen,NULL);

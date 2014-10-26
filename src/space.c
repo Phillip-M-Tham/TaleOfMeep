@@ -14,6 +14,7 @@ extern SDL_Surface *background;
 SDL_Surface *clipmask;
 Level level;
 int zcount;
+int ncount;
 //Mix_Music *BgMusic = NULL;
 
 void CloseLevel()
@@ -59,6 +60,7 @@ void GenerateLevel(char *filename,int x, int y)
   k=0;
   l=0;
   zcount=0;
+  ncount=0;
   while(fscanf(file,"%s",buf)!=EOF)
   {
 	  if(strcmp(buf,"#")==0)
@@ -185,11 +187,35 @@ void GenerateLevel(char *filename,int x, int y)
 				  //sprintf(text,"zombie%i",(zcount));
 				  strcpy(level.spawnlist[k].name,"zombie");
 				  //level.spawnlist[k].name;
-				  level.spawnlist[k].UnitType=zcount;
+				  level.spawnlist[k].UnitInfo=0;
 				  level.spawnlist[k].sx= i*50;
 				  level.spawnlist[k].sy=j*50; //j*50
 				  level.spawnlist[k].zcount=zcount;
 				  zcount++;
+				  k++;
+				  level.spawncount++;
+				  i++;
+			  }
+			  /*else if(buf[l]=='y')FIX ME LATER PLS
+			  {
+				  //char text[40];
+				  //sprintf(text,"zombie%i",(zcount));
+				  strcpy(level.spawnlist[k].name,"zombie");
+				  //level.spawnlist[k].name;
+				  level.spawnlist[k].UnitInfo=6;
+				  level.spawnlist[k].sx= i*50;
+				  level.spawnlist[k].sy=j*50; //j*50
+				  level.spawnlist[k].ncount=ncount;
+				  ncount++;
+				  k++;
+				  level.spawncount++;
+				  i++;
+			  }*/
+			   else if(buf[l]=='=')
+			  {
+				  strcpy(level.spawnlist[k].name,"wolf");
+				  level.spawnlist[k].sx= i*50;
+				  level.spawnlist[k].sy=j*50; //j*50
 				  k++;
 				  level.spawncount++;
 				  i++;
